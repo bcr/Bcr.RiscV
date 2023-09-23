@@ -1,6 +1,9 @@
 ﻿using ELFSharp.ELF;
 using ELFSharp.ELF.Sections;
 
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
 namespace Bcr.RiscV.Emulator.Console;
 
 internal class Program
@@ -26,5 +29,11 @@ internal class Program
         var start = ((ISymbolTable)elf.GetSection(".symtab")).Entries.Where(x => x.Name == "_start").First();
         var startAddress = ((ProgBitsSection<UInt32>)start.PointedSection).LoadAddress;
         System.Console.WriteLine($"_start = {startAddress:X8}");
+
+        HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
+        builder.Services.AddHostedService<EmulatorHost>();
+
+        IHost host = builder.Build();
+        host.Run();
     }
 }
