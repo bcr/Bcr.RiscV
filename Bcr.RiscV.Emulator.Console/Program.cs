@@ -1,2 +1,9 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿namespace Bcr.RiscV.Emulator.Console;
+
+internal class Program
+{
+    private static void Main(string[] args)
+    {
+        System.Console.WriteLine("Hello, World!");
+    }
+}
