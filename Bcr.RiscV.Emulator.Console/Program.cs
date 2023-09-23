@@ -1,4 +1,5 @@
 ﻿using ELFSharp.ELF;
+using ELFSharp.ELF.Sections;
 
 namespace Bcr.RiscV.Emulator.Console;
 
@@ -22,9 +23,8 @@ internal class Program
         // Load ELF file
         System.Console.WriteLine($"Loading {filename}");
         var elf = ELFReader.Load(filename);
-        foreach(var header in elf.Sections)
-        {
-            System.Console.WriteLine(header);
-        }
+        var start = ((ISymbolTable)elf.GetSection(".symtab")).Entries.Where(x => x.Name == "_start").First();
+        var startAddress = ((ProgBitsSection<UInt32>)start.PointedSection).LoadAddress;
+        System.Console.WriteLine($"_start = {startAddress:X8}");
     }
 }
