@@ -5,13 +5,13 @@ namespace Bcr.RiscV.Emulator.Console;
 
 class EmulatorHost : IHostedService
 {
-    private ILogger<EmulatorHost> logger;
+    private ILogger<EmulatorHost> _logger;
 
-    public EmulatorHost(ILogger<EmulatorHost> logger) => this.logger = logger;
+    public EmulatorHost(ILogger<EmulatorHost> logger) => this._logger = logger;
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        this.logger.LogCritical("You should implement this");
+        _logger.LogCritical("You should implement this");
         throw new NotImplementedException();
     }
 
