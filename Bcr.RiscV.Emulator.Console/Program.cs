@@ -30,10 +30,15 @@ internal class Program
         var startAddress = ((ProgBitsSection<UInt32>)start.PointedSection).LoadAddress;
         System.Console.WriteLine($"_start = {startAddress:X8}");
 
-        HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
-        builder.Services.AddHostedService<EmulatorHostedService>();
+        var builder = Host.CreateDefaultBuilder(args).ConfigureServices(services => {
+            services.AddSingleton<EmulatorService>();
+        });
 
         IHost host = builder.Build();
-        host.Run();
+
+        var myClass = host.Services.GetRequiredService<EmulatorService>();
+        myClass!.Run();
+        // host.Run();
+        System.Console.WriteLine("All done");
     }
 }
