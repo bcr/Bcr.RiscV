@@ -3,11 +3,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Bcr.RiscV.Emulator.Console;
 
-class EmulatorHost : IHostedService
+class EmulatorHostedService : IHostedService
 {
-    private ILogger<EmulatorHost> _logger;
+    private ILogger<EmulatorHostedService> _logger;
 
-    public EmulatorHost(ILogger<EmulatorHost> logger) => this._logger = logger;
+    public EmulatorHostedService(ILogger<EmulatorHostedService> logger) => this._logger = logger;
 
     public Task StartAsync(CancellationToken cancellationToken)
     {

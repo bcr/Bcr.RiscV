@@ -31,7 +31,7 @@ internal class Program
         System.Console.WriteLine($"_start = {startAddress:X8}");
 
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
-        builder.Services.AddHostedService<EmulatorHost>();
+        builder.Services.AddHostedService<EmulatorHostedService>();
 
         IHost host = builder.Build();
         host.Run();
