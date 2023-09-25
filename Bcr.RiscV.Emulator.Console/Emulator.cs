@@ -86,6 +86,10 @@ class Emulator : IEmulator
                     // Branch
                     switch (funct3)
                     {
+                        case 0b000:
+                            // BEQ
+                            conditionMet = registers[rs1] == registers[rs2];
+                            break;
                         case 0b001:
                             // BNE
                             conditionMet = registers[rs1] != registers[rs2];
