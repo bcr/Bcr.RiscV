@@ -98,6 +98,11 @@ class Emulator : IEmulator
                     immediate = UComputeImmediate(instruction);
                     registers[rd] = PC + (uint) immediate;
                     break;
+                case 0b011_0111:
+                    // LUI
+                    immediate = UComputeImmediate(instruction);
+                    registers[rd] = (uint) immediate;
+                    break;
                 default:
                     throw new NotImplementedException();
             }
