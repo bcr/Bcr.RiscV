@@ -5,17 +5,31 @@ namespace Bcr.RiscV.Emulator.Console;
 
 class ELFMemory : IMemory
 {
+    private Dictionary<uint, byte[]> _programChunks = new Dictionary<uint, byte[]>();
+
     public ELFMemory(string filename)
     {
-        // _logger.LogInformation("Loading {filename}", filename);
         var elf = ELFReader.Load(filename);
-        var start = ((ISymbolTable)elf.GetSection(".symtab")).Entries.Where(x => x.Name == "_start").First();
-        var startAddress = ((ProgBitsSection<UInt32>)start.PointedSection).LoadAddress;
-        // _logger.LogInformation("_start = {startAddress:X8}", startAddress);
+        var sectionsToLoad = elf.GetSections<ProgBitsSection<uint>>();
+        foreach (var section in sectionsToLoad)
+        {
+            _programChunks[section.LoadAddress] = section.GetContents();
+            System.Console.WriteLine(section);
+        }
     }
 
     public uint ReadInstruction(uint address)
     {
+        foreach (var startAddress in _programChunks.Keys)
+        {
+            var instructionLength = 4;
+            if ((address >= startAddress) &&
+                ((address + (instructionLength - 1)) <= (startAddress + _programChunks[startAddress].Length)))
+            {
+                var offset = address - startAddress;
+                return BitConverter.ToUInt32(_programChunks[startAddress], (int) offset);
+            }
+        }
         throw new NotImplementedException();
     }
 }
