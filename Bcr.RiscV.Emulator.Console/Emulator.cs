@@ -92,8 +92,6 @@ class Emulator : IEmulator
                             break;
                         case 0b100:
                             // BLT
-                            int rs1int = (int) registers[rs1];
-                            int rs2int = (int) registers[rs2];
                             conditionMet = (int) registers[rs1] < (int) registers[rs2];
                             break;
                         default:
