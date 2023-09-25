@@ -61,6 +61,9 @@ class Emulator : IEmulator
                     // CSR
                     switch (funct3)
                     {
+                        case 0b001:
+                            // CSRRW
+                            // !!! TODO: Implement something smarter
                         case 0b010:
                             // CSRRS
                             // !!! TODO: Implement something smarter
