@@ -41,7 +41,7 @@ class Emulator : IEmulator
                     // Compute immediate
                     immediate = UJComputeImmediate(instruction);
                     // Add immediate to PC
-                    PC = (immediate < 0) ? (PC - (uint) (-immediate)) : (PC + (uint) immediate);
+                    PC += (uint) immediate;
                     pcNeedsAdjusting = false;
                     break;
                 case 0b001_0011:
@@ -51,7 +51,7 @@ class Emulator : IEmulator
                         case 0b000:
                             // ADDI
                             immediate = IComputeImmediate(instruction);
-                            registers[rd] = (immediate < 0) ? (registers[rs1] - (uint) (-immediate)) : (registers[rs1] + (uint) immediate);
+                            registers[rd] = registers[rs1] + (uint) immediate;
                             break;
                         default:
                             throw new NotImplementedException();
@@ -79,7 +79,7 @@ class Emulator : IEmulator
                             if (registers[rs1] != registers[rs2])
                             {
                                 immediate = SBComputeImmediate(instruction);
-                                PC = (immediate < 0) ? (PC - (uint) (-immediate)) : (PC + (uint) immediate);
+                                PC += (uint) immediate;
                                 pcNeedsAdjusting = false;
                             }
                             break;
@@ -90,7 +90,7 @@ class Emulator : IEmulator
                 case 0b001_0111:
                     // AUIPC
                     immediate = UComputeImmediate(instruction);
-                    registers[rd] = (immediate < 0) ? (PC - (uint) (-immediate)) : (PC + (uint) immediate);
+                    registers[rd] = PC + (uint) immediate;
                     break;
                 default:
                     throw new NotImplementedException();
