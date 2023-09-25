@@ -197,10 +197,10 @@ class Emulator : IEmulator
     {
         // imm[20|10:1|11|19:12]
         Range[] ranges = {
-            new System.Range(20, 20),
-            new System.Range(10, 1),
-            new System.Range(11, 11),
-            new System.Range(19, 12),
+            new(20, 20),
+            new(10, 1),
+            new(11, 11),
+            new(19, 12),
         };
         return SignExtend(ComputeImmediate(instruction, ranges, 31, 0), ranges[0].Start.Value);
     }
@@ -208,7 +208,7 @@ class Emulator : IEmulator
     private int IComputeImmediate(uint instruction)
     {
         Range[] ranges = {
-            new System.Range(11, 0),
+            new(11, 0),
         };
         return SignExtend(ComputeImmediate(instruction, ranges, 31, 0), ranges[0].Start.Value);
     }
@@ -217,13 +217,13 @@ class Emulator : IEmulator
     {
         // imm[20|10:1|11|19:12]
         Range[] ranges = {
-            new System.Range(12, 12),
-            new System.Range(10, 5),
+            new(12, 12),
+            new(10, 5),
         };
         var returnValue = ComputeImmediate(instruction, ranges, 31, 0);
         Range[] ranges2 = {
-            new System.Range(4, 1),
-            new System.Range(11, 11),
+            new(4, 1),
+            new(11, 11),
         };
         return SignExtend(ComputeImmediate(instruction, ranges2, 11, returnValue), 12);
     }
@@ -231,7 +231,7 @@ class Emulator : IEmulator
     private int UComputeImmediate(uint instruction)
     {
         Range[] ranges = {
-            new System.Range(31, 12),
+            new(31, 12),
         };
         return SignExtend(ComputeImmediate(instruction, ranges, 31, 0), ranges[0].Start.Value);
     }
