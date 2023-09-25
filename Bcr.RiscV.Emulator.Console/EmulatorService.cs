@@ -13,8 +13,8 @@ class EmulatorService
         this._emulator = emulator;
     }
 
-    public void Run()
+    public int Run()
     {
-        _emulator.Run();
+        return _emulator.Run();
     }
 }

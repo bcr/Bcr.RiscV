@@ -5,7 +5,7 @@ namespace Bcr.RiscV.Emulator.Console;
 
 internal class Program
 {
-    private static void Main(string[] args)
+    private static int Main(string[] args)
     {
         string? filename = null;
         foreach (var arg in args)
@@ -25,14 +25,16 @@ internal class Program
             services.AddSingleton<EmulatorService>();
             services.AddSingleton<IMemory>(new ELFMemory(filename!));
             services.AddTransient<ICsr, DefaultCsr>();
+            services.AddTransient<IEcall, DefaultEcall>();
             services.AddTransient<IEmulator, Emulator>();
         });
 
         IHost host = builder.Build();
 
         var myClass = host.Services.GetRequiredService<EmulatorService>();
-        myClass.Run();
+        var returnValue = myClass.Run();
         // host.Run();
         System.Console.WriteLine("All done");
+        return returnValue;
     }
 }

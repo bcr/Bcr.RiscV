@@ -9,20 +9,24 @@ class Emulator : IEmulator
     private ILogger<Emulator> _logger;
     private IMemory _memory;
     private ICsr _csr;
+    private IEcall _ecall;
 
-    public Emulator(ILogger<Emulator> logger, IMemory memory, ICsr csr)
+    public Emulator(ILogger<Emulator> logger, IMemory memory, ICsr csr, IEcall ecall)
     {
         _logger = logger;
         _memory = memory;
         _csr = csr;
+        _ecall = ecall;
     }
 
-    public void Run()
+    public int Run()
     {
         var PC = startAddress;
         var registers = new uint[32];
+        int returnValue = 0;
+        bool running = true;
         _logger.LogInformation("Emulator starting");
-        while (true)
+        while (running)
         {
             // Read next instruction
             var instruction = _memory.ReadInstruction(PC);
@@ -75,6 +79,10 @@ class Emulator : IEmulator
                             // xRET
                             switch (funct12)
                             {
+                                case 0b0000_0000_0000:
+                                    // ECALL
+                                    running = !(_ecall.HandleEcall(registers, out returnValue));
+                                    break;
                                 case 0b0011_0000_0010:
                                     // MRET
                                     PC = _csr.Read(CsrRegisters.mepc);
@@ -137,6 +145,9 @@ class Emulator : IEmulator
                     immediate = UComputeImmediate(instruction);
                     registers[rd] = (uint) immediate;
                     break;
+                case 0b000_1111:
+                    // FENCE
+                    break;
                 default:
                     throw new NotImplementedException();
             }
@@ -149,6 +160,7 @@ class Emulator : IEmulator
                 PC += 4;
             }
         }
+        return returnValue;
     }
 
     private int SignExtend(int value, int bitPosition)
