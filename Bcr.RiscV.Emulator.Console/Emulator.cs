@@ -82,20 +82,28 @@ class Emulator : IEmulator
                     }
                     break;
                 case 0b110_0011:
+                    var conditionMet = false;
                     // Branch
                     switch (funct3)
                     {
                         case 0b001:
                             // BNE
-                            if (registers[rs1] != registers[rs2])
-                            {
-                                immediate = SBComputeImmediate(instruction);
-                                PC += (uint) immediate;
-                                pcNeedsAdjusting = false;
-                            }
+                            conditionMet = registers[rs1] != registers[rs2];
+                            break;
+                        case 0b100:
+                            // BLT
+                            int rs1int = (int) registers[rs1];
+                            int rs2int = (int) registers[rs2];
+                            conditionMet = (int) registers[rs1] < (int) registers[rs2];
                             break;
                         default:
                             throw new NotImplementedException();
+                    }
+                    if (conditionMet)
+                    {
+                        immediate = SBComputeImmediate(instruction);
+                        PC += (uint) immediate;
+                        pcNeedsAdjusting = false;
                     }
                     break;
                 case 0b001_0111:
