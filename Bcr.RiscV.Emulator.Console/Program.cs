@@ -34,7 +34,6 @@ internal class Program
         var myClass = host.Services.GetRequiredService<EmulatorService>();
         var returnValue = myClass.Run();
         // host.Run();
-        System.Console.WriteLine("All done");
         return returnValue;
     }
 }

@@ -14,7 +14,6 @@ class ELFMemory : IMemory
         foreach (var section in sectionsToLoad)
         {
             _programChunks[section.LoadAddress] = section.GetContents();
-            System.Console.WriteLine(section);
         }
     }
 
