@@ -87,6 +87,11 @@ class Emulator : IEmulator
                             throw new NotImplementedException();
                     }
                     break;
+                case 0b001_0111:
+                    // AUIPC
+                    immediate = UComputeImmediate(instruction);
+                    registers[rd] = (immediate < 0) ? (PC - (uint) (-immediate)) : (PC + (uint) immediate);
+                    break;
                 default:
                     throw new NotImplementedException();
             }
@@ -166,5 +171,13 @@ class Emulator : IEmulator
             new System.Range(11, 11),
         };
         return SignExtend(ComputeImmediate(instruction, ranges2, 11, returnValue), 12);
+    }
+
+    private int UComputeImmediate(uint instruction)
+    {
+        Range[] ranges = {
+            new System.Range(31, 12),
+        };
+        return SignExtend(ComputeImmediate(instruction, ranges, 31, 0), ranges[0].Start.Value);
     }
 }
