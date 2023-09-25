@@ -28,8 +28,10 @@ class Emulator : IEmulator
             var opcode = instruction & 0b111_1111;
             var rd = (instruction & 0b1111_1000_0000) >> 7;
             var rs1 = (instruction & 0b1111_1000_0000_0000_0000) >> 15;
+            var rs2 = (instruction & 0b1_1111_0000_0000_0000_0000_0000)>> 20;
             var funct3 = (instruction & 0b111_0000_0000_0000) >> 12;
             bool pcNeedsAdjusting = true;
+            int immediate = 0;
             switch (opcode)
             {
                 case 0b110_1111:
@@ -37,9 +39,9 @@ class Emulator : IEmulator
                     _logger.LogInformation("{rd}", rd);
                     registers[rd] = PC + 4;
                     // Compute immediate
-                    var offset = UJComputeImmediate(instruction);
+                    immediate = UJComputeImmediate(instruction);
                     // Add immediate to PC
-                    PC = (offset < 0) ? (PC - (uint) (-offset)) : (PC + (uint) offset);
+                    PC = (immediate < 0) ? (PC - (uint) (-immediate)) : (PC + (uint) immediate);
                     pcNeedsAdjusting = false;
                     break;
                 case 0b001_0011:
@@ -48,7 +50,7 @@ class Emulator : IEmulator
                     {
                         case 0b000:
                             // ADDI
-                            var immediate = IComputeImmediate(instruction);
+                            immediate = IComputeImmediate(instruction);
                             registers[rd] = (immediate < 0) ? (registers[rs1] - (uint) (-immediate)) : (registers[rs1] + (uint) immediate);
                             break;
                         default:
@@ -63,6 +65,23 @@ class Emulator : IEmulator
                             // CSRRS
                             // !!! TODO: Implement something smarter
                             registers[rd] = 0;
+                            break;
+                        default:
+                            throw new NotImplementedException();
+                    }
+                    break;
+                case 0b110_0011:
+                    // Branch
+                    switch (funct3)
+                    {
+                        case 0b001:
+                            // BNE
+                            if (registers[rs1] != registers[rs2])
+                            {
+                                immediate = SBComputeImmediate(instruction);
+                                PC = (immediate < 0) ? (PC - (uint) (-immediate)) : (PC + (uint) immediate);
+                                pcNeedsAdjusting = false;
+                            }
                             break;
                         default:
                             throw new NotImplementedException();
@@ -94,6 +113,26 @@ class Emulator : IEmulator
         return finalValue;
     }
 
+    private int ComputeImmediate(uint instruction, Range[] ranges, int offset, int initialValue)
+    {
+        int finalValue = initialValue;
+
+        foreach (var range in ranges)
+        {
+            var rangeLength = range.Start.Value - range.End.Value + 1;
+
+            var mask = (1 << rangeLength) - 1;
+            mask <<= offset - (rangeLength - 1);
+            var value = instruction & mask;
+            value >>= (offset - range.Start.Value);
+            finalValue |= (int) value;
+
+            offset -= rangeLength;
+        }
+
+        return finalValue;
+    }
+
     private int UJComputeImmediate(uint instruction)
     {
         // imm[20|10:1|11|19:12]
@@ -103,24 +142,7 @@ class Emulator : IEmulator
             new System.Range(11, 11),
             new System.Range(19, 12),
         };
-        int offset = 31;
-        int finalValue = 0;
-
-        foreach (var range in ranges)
-        {
-            var rangeLength = range.Start.Value - range.End.Value + 1;
-
-            var mask = (1 << rangeLength) - 1;
-            mask <<= offset - (rangeLength - 1);
-            var value = instruction & mask;
-            value >>= (offset - range.Start.Value);
-            finalValue |= (int) value;
-
-            offset -= rangeLength;
-        }
-
-        finalValue = SignExtend(finalValue, 20);
-        return finalValue;
+        return SignExtend(ComputeImmediate(instruction, ranges, 31, 0), ranges[0].Start.Value);
     }
 
     private int IComputeImmediate(uint instruction)
@@ -128,23 +150,21 @@ class Emulator : IEmulator
         Range[] ranges = {
             new System.Range(11, 0),
         };
-        int offset = 31;
-        int finalValue = 0;
+        return SignExtend(ComputeImmediate(instruction, ranges, 31, 0), ranges[0].Start.Value);
+    }
 
-        foreach (var range in ranges)
-        {
-            var rangeLength = range.Start.Value - range.End.Value + 1;
-
-            var mask = (1 << rangeLength) - 1;
-            mask <<= offset - (rangeLength - 1);
-            var value = instruction & mask;
-            value >>= (offset - range.Start.Value);
-            finalValue |= (int) value;
-
-            offset -= rangeLength;
-        }
-
-        finalValue = SignExtend(finalValue, 11);
-        return finalValue;
+    private int SBComputeImmediate(uint instruction)
+    {
+        // imm[20|10:1|11|19:12]
+        Range[] ranges = {
+            new System.Range(12, 12),
+            new System.Range(10, 5),
+        };
+        var returnValue = ComputeImmediate(instruction, ranges, 31, 0);
+        Range[] ranges2 = {
+            new System.Range(4, 1),
+            new System.Range(11, 11),
+        };
+        return SignExtend(ComputeImmediate(instruction, ranges2, 11, returnValue), 12);
     }
 }
