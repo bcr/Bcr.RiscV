@@ -27,6 +27,8 @@ class Emulator : IEmulator
             _logger.LogInformation("Instruction is {instruction:X8}", instruction);
             var opcode = instruction & 0b111_1111;
             var rd = (instruction & 0b1111_1000_0000) >> 7;
+            var rs1 = (instruction & 0b1111_1000_0000_0000_0000) >> 15;
+            var funct3 = (instruction & 0b111_0000_0000_0000) >> 12;
             bool pcNeedsAdjusting = true;
             switch (opcode)
             {
@@ -39,6 +41,19 @@ class Emulator : IEmulator
                     // Add immediate to PC
                     PC = (offset < 0) ? (PC - (uint) (-offset)) : (PC + (uint) offset);
                     pcNeedsAdjusting = false;
+                    break;
+                case 0b001_0011:
+                    // ALU
+                    switch (funct3)
+                    {
+                        case 0b000:
+                            // ADDI
+                            var immediate = IComputeImmediate(instruction);
+                            registers[rd] = (immediate < 0) ? (registers[rs1] - (uint) (-immediate)) : (registers[rs1] + (uint) immediate);
+                            break;
+                        default:
+                            throw new NotImplementedException();
+                    }
                     break;
                 default:
                     throw new NotImplementedException();
@@ -92,6 +107,31 @@ class Emulator : IEmulator
         }
 
         finalValue = SignExtend(finalValue, 20);
+        return finalValue;
+    }
+
+    private int IComputeImmediate(uint instruction)
+    {
+        Range[] ranges = {
+            new System.Range(11, 0),
+        };
+        int offset = 31;
+        int finalValue = 0;
+
+        foreach (var range in ranges)
+        {
+            var rangeLength = range.Start.Value - range.End.Value + 1;
+
+            var mask = (1 << rangeLength) - 1;
+            mask <<= offset - (rangeLength - 1);
+            var value = instruction & mask;
+            value >>= (offset - range.Start.Value);
+            finalValue |= (int) value;
+
+            offset -= rangeLength;
+        }
+
+        finalValue = SignExtend(finalValue, 11);
         return finalValue;
     }
 }
