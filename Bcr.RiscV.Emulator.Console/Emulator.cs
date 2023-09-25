@@ -32,6 +32,7 @@ class Emulator : IEmulator
             var rs1 = (instruction & 0b1111_1000_0000_0000_0000) >> 15;
             var rs2 = (instruction & 0b1_1111_0000_0000_0000_0000_0000)>> 20;
             var funct3 = (instruction & 0b111_0000_0000_0000) >> 12;
+            var funct12 = (instruction & 0b1111_1111_1111_0000_0000_0000_0000_0000) >> 20;
             var shamt = rs2;
             var csr = (instruction & 0b1111_1111_1111_0000_0000_0000_0000_0000) >> 20;
             var csrimm = rs1;
@@ -67,9 +68,22 @@ class Emulator : IEmulator
                     }
                     break;
                 case 0b111_0011:
-                    // CSR
+                    // SYSTEM
                     switch (funct3)
                     {
+                        case 0b000:
+                            // xRET
+                            switch (funct12)
+                            {
+                                case 0b0011_0000_0010:
+                                    // MRET
+                                    PC = _csr.Read(CsrRegisters.mepc);
+                                    pcNeedsAdjusting = false;
+                                    break;
+                                default:
+                                    throw new NotImplementedException();
+                            }
+                            break;
                         case 0b001:
                             // CSRRW
                             registers[rd] = _csr.ReadWrite(csr, registers[rs1]);

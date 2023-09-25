@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 namespace Bcr.RiscV.Emulator.Console;
 
 // https://five-embeddev.com/riscv-isa-manual/latest/priv-csrs.html
+// https://five-embeddev.com/riscv-isa-manual/latest/machine.html#otherpriv
 // 180 satp
 // 300 mstatus
 // 302 medeleg
