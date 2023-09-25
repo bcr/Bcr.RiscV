@@ -55,6 +55,19 @@ class Emulator : IEmulator
                             throw new NotImplementedException();
                     }
                     break;
+                case 0b111_0011:
+                    // CSR
+                    switch (funct3)
+                    {
+                        case 0b010:
+                            // CSRRS
+                            // !!! TODO: Implement something smarter
+                            registers[rd] = 0;
+                            break;
+                        default:
+                            throw new NotImplementedException();
+                    }
+                    break;
                 default:
                     throw new NotImplementedException();
             }
