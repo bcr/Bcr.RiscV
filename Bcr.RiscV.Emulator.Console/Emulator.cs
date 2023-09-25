@@ -8,11 +8,13 @@ class Emulator : IEmulator
 
     private ILogger<Emulator> _logger;
     private IMemory _memory;
+    private ICsr _csr;
 
-    public Emulator(ILogger<Emulator> logger, IMemory memory)
+    public Emulator(ILogger<Emulator> logger, IMemory memory, ICsr csr)
     {
         _logger = logger;
         _memory = memory;
+        _csr = csr;
     }
 
     public void Run()
@@ -31,6 +33,8 @@ class Emulator : IEmulator
             var rs2 = (instruction & 0b1_1111_0000_0000_0000_0000_0000)>> 20;
             var funct3 = (instruction & 0b111_0000_0000_0000) >> 12;
             var shamt = rs2;
+            var csr = (instruction & 0b1111_1111_1111_0000_0000_0000_0000_0000) >> 20;
+            var csrimm = rs1;
             bool pcNeedsAdjusting = true;
             int immediate = 0;
             switch (opcode)
@@ -68,14 +72,15 @@ class Emulator : IEmulator
                     {
                         case 0b001:
                             // CSRRW
-                            // !!! TODO: Implement something smarter
+                            registers[rd] = _csr.ReadWrite(csr, registers[rs1]);
+                            break;
                         case 0b010:
                             // CSRRS
-                            // !!! TODO: Implement something smarter
+                            registers[rd] = _csr.ReadSet(csr, registers[rs1]);
+                            break;
                         case 0b101:
                             // CSRRWI
-                            // !!! TODO: Implement something smarter
-                            registers[rd] = 0;
+                            registers[rd] = _csr.ReadWrite(csr, csrimm);
                             break;
                         default:
                             throw new NotImplementedException();

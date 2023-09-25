@@ -24,6 +24,7 @@ internal class Program
         var builder = Host.CreateDefaultBuilder(args).ConfigureServices(services => {
             services.AddSingleton<EmulatorService>();
             services.AddSingleton<IMemory>(new ELFMemory(filename!));
+            services.AddTransient<ICsr, DefaultCsr>();
             services.AddTransient<IEmulator, Emulator>();
         });
 
