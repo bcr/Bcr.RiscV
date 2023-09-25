@@ -5,12 +5,16 @@ namespace Bcr.RiscV.Emulator.Console;
 class EmulatorService
 {
     private ILogger<EmulatorService> _logger;
+    private IEmulator _emulator;
 
-    public EmulatorService(ILogger<EmulatorService> logger) => this._logger = logger;
+    public EmulatorService(ILogger<EmulatorService> logger, IEmulator emulator)
+    {
+        this._logger = logger;
+        this._emulator = emulator;
+    }
 
     public void Run()
     {
-        _logger.LogCritical("You should implement this");
-        // throw new NotImplementedException();
+        _emulator.Run();
     }
 }

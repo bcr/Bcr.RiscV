@@ -1,7 +1,4 @@
-﻿using ELFSharp.ELF;
-using ELFSharp.ELF.Sections;
-
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Bcr.RiscV.Emulator.Console;
@@ -23,21 +20,17 @@ internal class Program
                 // Option of some sort
             }
         }
-        // Load ELF file
-        System.Console.WriteLine($"Loading {filename}");
-        var elf = ELFReader.Load(filename);
-        var start = ((ISymbolTable)elf.GetSection(".symtab")).Entries.Where(x => x.Name == "_start").First();
-        var startAddress = ((ProgBitsSection<UInt32>)start.PointedSection).LoadAddress;
-        System.Console.WriteLine($"_start = {startAddress:X8}");
 
         var builder = Host.CreateDefaultBuilder(args).ConfigureServices(services => {
             services.AddSingleton<EmulatorService>();
+            services.AddSingleton<IMemory>(new ELFMemory(filename!));
+            services.AddTransient<IEmulator, Emulator>();
         });
 
         IHost host = builder.Build();
 
         var myClass = host.Services.GetRequiredService<EmulatorService>();
-        myClass!.Run();
+        myClass.Run();
         // host.Run();
         System.Console.WriteLine("All done");
     }
