@@ -30,7 +30,6 @@ class Emulator : IEmulator
         {
             // Read next instruction
             var instruction = _memory.ReadInstruction(PC);
-            _logger.LogInformation("Instruction is {instruction:X8}", instruction);
             var opcode = instruction & 0b111_1111;
             var rd = (instruction & 0b1111_1000_0000) >> 7;
             var rs1 = (instruction & 0b1111_1000_0000_0000_0000) >> 15;
@@ -46,7 +45,6 @@ class Emulator : IEmulator
             {
                 case 0b110_1111:
                     // JAL
-                    _logger.LogInformation("{rd}", rd);
                     registers[rd] = PC + 4;
                     // Compute immediate
                     immediate = UJComputeImmediate(instruction);
