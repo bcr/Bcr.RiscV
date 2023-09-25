@@ -67,6 +67,9 @@ class Emulator : IEmulator
                         case 0b010:
                             // CSRRS
                             // !!! TODO: Implement something smarter
+                        case 0b101:
+                            // CSRRWI
+                            // !!! TODO: Implement something smarter
                             registers[rd] = 0;
                             break;
                         default:
