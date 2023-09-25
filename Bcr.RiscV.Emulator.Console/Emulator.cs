@@ -30,6 +30,7 @@ class Emulator : IEmulator
             var rs1 = (instruction & 0b1111_1000_0000_0000_0000) >> 15;
             var rs2 = (instruction & 0b1_1111_0000_0000_0000_0000_0000)>> 20;
             var funct3 = (instruction & 0b111_0000_0000_0000) >> 12;
+            var shamt = rs2;
             bool pcNeedsAdjusting = true;
             int immediate = 0;
             switch (opcode)
@@ -52,6 +53,10 @@ class Emulator : IEmulator
                             // ADDI
                             immediate = IComputeImmediate(instruction);
                             registers[rd] = registers[rs1] + (uint) immediate;
+                            break;
+                        case 0b001:
+                            // SLLI
+                            registers[rd] = registers[rs1] << (int) shamt;
                             break;
                         default:
                             throw new NotImplementedException();
