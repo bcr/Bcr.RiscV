@@ -65,6 +65,11 @@ class Emulator : IEmulator
                             // SLLI
                             registers[rd] = registers[rs1] << (int) shamt;
                             break;
+                        case 0b110:
+                            // ORI
+                            immediate = IComputeImmediate(instruction);
+                            registers[rd] = registers[rs1] | (uint) immediate;
+                            break;
                         default:
                             throw new NotImplementedException();
                     }
