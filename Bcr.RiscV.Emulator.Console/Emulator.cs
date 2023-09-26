@@ -169,6 +169,7 @@ class Emulator : IEmulator
                         0b001 => registers[rs1] != registers[rs2], // BNE
                         0b100 => (int)registers[rs1] < (int)registers[rs2], // BLT
                         0b101 => (int)registers[rs1] >= (int)registers[rs2], // BGE
+                        0b110 => registers[rs1] < registers[rs2], // BLTU
                         _ => throw new NotImplementedException(),
                     };
                     if (conditionMet)
