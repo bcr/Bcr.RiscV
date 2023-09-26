@@ -50,6 +50,7 @@ class Emulator : IEmulator
                     registers[rd] = funct3 switch
                     {
                         0b000 => (uint)SignExtend(_memory.ReadByte(readAddress), 7), // LB
+                        0b001 => (uint)SignExtend(_memory.ReadHalfword(readAddress), 15), // LH
                         0b100 => _memory.ReadByte(readAddress), // LBU
                         _ => throw new IllegalInstructionException(PC, instruction),
                     };
