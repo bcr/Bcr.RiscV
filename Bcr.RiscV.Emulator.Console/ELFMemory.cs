@@ -54,4 +54,9 @@ class ELFMemory : IMemory
     {
         LocateSpan(address, 1)[0] = value;
     }
+
+    public void WriteHalfword(uint address, ushort value)
+    {
+        BitConverter.GetBytes(value).CopyTo(LocateSpan(address, 2));
+    }
 }

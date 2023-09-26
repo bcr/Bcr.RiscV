@@ -7,4 +7,5 @@ interface IMemory
     uint ReadInstruction(uint address);
     uint ReadWord(uint address);
     void WriteByte(uint address, byte value);
+    void WriteHalfword(uint address, ushort value);
 }
