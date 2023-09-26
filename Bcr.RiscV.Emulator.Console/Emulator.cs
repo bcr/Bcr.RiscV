@@ -65,6 +65,11 @@ class Emulator : IEmulator
                             // SLLI
                             registers[rd] = registers[rs1] << (int) shamt;
                             break;
+                        case 0b101:
+                            // SRAI
+                            immediate = IComputeImmediate(instruction);
+                            registers[rd] = (uint) SignExtend((int) (registers[rs1] >> (int) shamt), (int) (31 - shamt));
+                            break;
                         case 0b110:
                             // ORI
                             immediate = IComputeImmediate(instruction);
