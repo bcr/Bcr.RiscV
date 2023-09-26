@@ -69,6 +69,10 @@ class Emulator : IEmulator
                             // SH
                             _memory.WriteHalfword(writeAddress, (ushort) (registers[rs2] & 0x0FFFF));
                             break;
+                        case 0b010:
+                            // SW
+                            _memory.WriteWord(writeAddress, registers[rs2]);
+                            break;
                         default:
                             throw new IllegalInstructionException(PC, instruction);
                     }
