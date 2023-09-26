@@ -162,29 +162,15 @@ class Emulator : IEmulator
                     }
                     break;
                 case 0b110_0011:
-                    var conditionMet = false;
                     // Branch
-                    switch (funct3)
+                    bool conditionMet = funct3 switch
                     {
-                        case 0b000:
-                            // BEQ
-                            conditionMet = registers[rs1] == registers[rs2];
-                            break;
-                        case 0b001:
-                            // BNE
-                            conditionMet = registers[rs1] != registers[rs2];
-                            break;
-                        case 0b100:
-                            // BLT
-                            conditionMet = (int) registers[rs1] < (int) registers[rs2];
-                            break;
-                        case 0b101:
-                            // BGE
-                            conditionMet = (int) registers[rs1] >= (int) registers[rs2];
-                            break;
-                        default:
-                            throw new NotImplementedException();
-                    }
+                        0b000 => registers[rs1] == registers[rs2], // BEQ
+                        0b001 => registers[rs1] != registers[rs2], // BNE
+                        0b100 => (int)registers[rs1] < (int)registers[rs2], // BLT
+                        0b101 => (int)registers[rs1] >= (int)registers[rs2], // BGE
+                        _ => throw new NotImplementedException(),
+                    };
                     if (conditionMet)
                     {
                         immediate = SBComputeImmediate(instruction);
