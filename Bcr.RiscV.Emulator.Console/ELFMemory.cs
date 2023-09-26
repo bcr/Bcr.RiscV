@@ -44,4 +44,9 @@ class ELFMemory : IMemory
     {
         return BitConverter.ToUInt16(LocateSpan(address, 2));
     }
+
+    public uint ReadWord(uint address)
+    {
+        return BitConverter.ToUInt32(LocateSpan(address, 4));
+    }
 }
