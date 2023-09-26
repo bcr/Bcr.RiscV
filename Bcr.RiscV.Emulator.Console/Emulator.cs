@@ -105,6 +105,7 @@ class Emulator : IEmulator
                     {
                         0b000 => funct7 switch
                         {
+                            0b0000000 => registers[rs1] + registers[rs2], // ADD
                             0b0100000 => registers[rs1] - registers[rs2], // SUB
                             _ => throw new NotImplementedException(),
                         },
