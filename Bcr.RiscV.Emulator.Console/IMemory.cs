@@ -6,4 +6,5 @@ interface IMemory
     ushort ReadHalfword(uint address);
     uint ReadInstruction(uint address);
     uint ReadWord(uint address);
+    void WriteByte(uint address, byte value);
 }

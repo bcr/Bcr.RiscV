@@ -57,6 +57,18 @@ class Emulator : IEmulator
                         _ => throw new IllegalInstructionException(PC, instruction),
                     };
                     break;
+                case 0b010_0011:
+                    immediate = SComputeImmediate(instruction);
+                    uint writeAddress = (uint) (registers[rs1] + immediate);
+                    switch (funct3)
+                    {
+                        case 0b000:
+                            _memory.WriteByte(writeAddress, (byte) (registers[rs2] & 0x0FF));
+                            break;
+                        default:
+                            throw new IllegalInstructionException(PC, instruction);
+                    }
+                    break;
                 case 0b110_1111:
                     // JAL
                     registers[rd] = PC + 4;
@@ -283,5 +295,17 @@ class Emulator : IEmulator
             new(31, 12),
         };
         return ComputeImmediate(instruction, ranges, 31, 0);
+    }
+
+    private int SComputeImmediate(uint instruction)
+    {
+        Range[] ranges = {
+            new(11, 5),
+        };
+        var returnValue = ComputeImmediate(instruction, ranges, 31, 0);
+        Range[] ranges2 = {
+            new(4, 0),
+        };
+        return SignExtend(ComputeImmediate(instruction, ranges2, 11, returnValue), 11);
     }
 }

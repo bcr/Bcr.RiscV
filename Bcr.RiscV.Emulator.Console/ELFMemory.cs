@@ -49,4 +49,9 @@ class ELFMemory : IMemory
     {
         return BitConverter.ToUInt32(LocateSpan(address, 4));
     }
+
+    public void WriteByte(uint address, byte value)
+    {
+        LocateSpan(address, 1)[0] = value;
+    }
 }
