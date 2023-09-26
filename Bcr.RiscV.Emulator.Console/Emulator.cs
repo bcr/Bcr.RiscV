@@ -55,50 +55,19 @@ class Emulator : IEmulator
                     break;
                 case 0b001_0011:
                     // ALU
-                    switch (funct3)
+                    immediate = IComputeImmediate(instruction);
+                    registers[rd] = funct3 switch
                     {
-                        case 0b000:
-                            // ADDI
-                            immediate = IComputeImmediate(instruction);
-                            registers[rd] = registers[rs1] + (uint) immediate;
-                            break;
-                        case 0b001:
-                            // SLLI
-                            registers[rd] = registers[rs1] << (int) shamt;
-                            break;
-                        case 0b010:
-                            // SLTI
-                            immediate = IComputeImmediate(instruction);
-                            registers[rd] = (uint) (((int) registers[rs1] < immediate) ? 1 : 0);
-                            break;
-                        case 0b011:
-                            // SLTIU
-                            immediate = IComputeImmediate(instruction);
-                            registers[rd] = (uint) ((registers[rs1] < (uint) immediate) ? 1 : 0);
-                            break;
-                        case 0b100:
-                            // XORI
-                            immediate = IComputeImmediate(instruction);
-                            registers[rd] = registers[rs1] ^ (uint) immediate;
-                            break;
-                        case 0b101:
-                            // SRAI
-                            immediate = IComputeImmediate(instruction);
-                            registers[rd] = (uint) SignExtend((int) (registers[rs1] >> (int) shamt), (int) (31 - shamt));
-                            break;
-                        case 0b110:
-                            // ORI
-                            immediate = IComputeImmediate(instruction);
-                            registers[rd] = registers[rs1] | (uint) immediate;
-                            break;
-                        case 0b111:
-                            // ANDI
-                            immediate = IComputeImmediate(instruction);
-                            registers[rd] = registers[rs1] & (uint) immediate;
-                            break;
-                        default:
-                            throw new NotImplementedException();
-                    }
+                        0b000 => registers[rs1] + (uint)immediate, // ADDI
+                        0b001 => registers[rs1] << (int)shamt, // SLLI
+                        0b010 => (uint)(((int)registers[rs1] < immediate) ? 1 : 0), // SLTI
+                        0b011 => (uint)((registers[rs1] < (uint)immediate) ? 1 : 0), // SLTIU
+                        0b100 => registers[rs1] ^ (uint)immediate, // XORI
+                        0b101 => (uint)SignExtend((int)(registers[rs1] >> (int)shamt), (int)(31 - shamt)), // SRAI
+                        0b110 => registers[rs1] | (uint)immediate, // ORI
+                        0b111 => registers[rs1] & (uint)immediate, // ANDI
+                        _ => throw new NotImplementedException(),
+                    };
                     break;
                 case 0b011_0011:
                     registers[rd] = funct3 switch
