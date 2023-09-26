@@ -201,6 +201,14 @@ class Emulator : IEmulator
                 case 0b000_1111:
                     // FENCE
                     break;
+                case 0b110_0111:
+                    // JALR
+                    immediate = IComputeImmediate(instruction);
+                    var oldPC = PC;
+                    PC = registers[rs1] + (uint) immediate;
+                    registers[rd] = oldPC + 4;
+                    pcNeedsAdjusting = false;
+                    break;
                 default:
                     throw new NotImplementedException();
             }
