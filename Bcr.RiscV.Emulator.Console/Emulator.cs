@@ -81,22 +81,15 @@ class Emulator : IEmulator
                     }
                     break;
                 case 0b011_0011:
-                    switch (funct3)
+                    registers[rd] = funct3 switch
                     {
-                        case 0b000:
-                            switch (funct7)
-                            {
-                                case 0b0100000:
-                                    // SUB
-                                    registers[rd] = registers[rs1] - registers[rs2];
-                                    break;
-                                default:
-                                    throw new NotImplementedException();
-                            }
-                            break;
-                        default:
-                            throw new NotImplementedException();
-                    }
+                        0b000 => funct7 switch
+                        {
+                            0b0100000 => registers[rs1] - registers[rs2], // SUB
+                            _ => throw new NotImplementedException(),
+                        },
+                        _ => throw new NotImplementedException(),
+                    };
                     break;
                 case 0b111_0011:
                     // SYSTEM
