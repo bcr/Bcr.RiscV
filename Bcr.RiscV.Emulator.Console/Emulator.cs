@@ -178,6 +178,10 @@ class Emulator : IEmulator
                             // BLT
                             conditionMet = (int) registers[rs1] < (int) registers[rs2];
                             break;
+                        case 0b101:
+                            // BGE
+                            conditionMet = (int) registers[rs1] >= (int) registers[rs2];
+                            break;
                         default:
                             throw new NotImplementedException();
                     }
