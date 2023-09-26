@@ -52,6 +52,7 @@ class Emulator : IEmulator
                         0b000 => (uint)SignExtend(_memory.ReadByte(readAddress), 7), // LB
                         0b001 => (uint)SignExtend(_memory.ReadHalfword(readAddress), 15), // LH
                         0b100 => _memory.ReadByte(readAddress), // LBU
+                        0b101 => _memory.ReadHalfword(readAddress), // LHU
                         _ => throw new IllegalInstructionException(PC, instruction),
                     };
                     break;
