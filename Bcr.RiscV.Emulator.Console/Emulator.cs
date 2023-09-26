@@ -76,6 +76,11 @@ class Emulator : IEmulator
                             immediate = IComputeImmediate(instruction);
                             registers[rd] = registers[rs1] | (uint) immediate;
                             break;
+                        case 0b111:
+                            // ANDI
+                            immediate = IComputeImmediate(instruction);
+                            registers[rd] = registers[rs1] & (uint) immediate;
+                            break;
                         default:
                             throw new NotImplementedException();
                     }
