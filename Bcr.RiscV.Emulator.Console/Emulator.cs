@@ -35,6 +35,7 @@ class Emulator : IEmulator
             var rs1 = (instruction & 0b1111_1000_0000_0000_0000) >> 15;
             var rs2 = (instruction & 0b1_1111_0000_0000_0000_0000_0000)>> 20;
             var funct3 = (instruction & 0b111_0000_0000_0000) >> 12;
+            var funct7 = (instruction & 0b1111_1110_0000_0000_0000_0000_0000_0000) >> 25;
             var funct12 = (instruction & 0b1111_1111_1111_0000_0000_0000_0000_0000) >> 20;
             var shamt = rs2;
             var csr = (instruction & 0b1111_1111_1111_0000_0000_0000_0000_0000) >> 20;
@@ -74,6 +75,24 @@ class Emulator : IEmulator
                             // ORI
                             immediate = IComputeImmediate(instruction);
                             registers[rd] = registers[rs1] | (uint) immediate;
+                            break;
+                        default:
+                            throw new NotImplementedException();
+                    }
+                    break;
+                case 0b011_0011:
+                    switch (funct3)
+                    {
+                        case 0b000:
+                            switch (funct7)
+                            {
+                                case 0b0100000:
+                                    // SUB
+                                    registers[rd] = registers[rs1] - registers[rs2];
+                                    break;
+                                default:
+                                    throw new NotImplementedException();
+                            }
                             break;
                         default:
                             throw new NotImplementedException();
