@@ -17,18 +17,26 @@ class ELFMemory : IMemory
         }
     }
 
-    public uint ReadInstruction(uint address)
+    private Span<byte> LocateSpan(uint address, int length)
     {
         foreach (var startAddress in _programChunks.Keys)
         {
-            var instructionLength = 4;
             if ((address >= startAddress) &&
-                ((address + (instructionLength - 1)) <= (startAddress + _programChunks[startAddress].Length)))
+                ((address + (length - 1)) <= (startAddress + _programChunks[startAddress].Length)))
             {
-                var offset = address - startAddress;
-                return BitConverter.ToUInt32(_programChunks[startAddress], (int) offset);
+                return new Span<byte>(_programChunks[startAddress], (int) (address - startAddress), length);
             }
         }
         throw new NotImplementedException();
+    }
+
+    public byte ReadByte(uint address)
+    {
+        return LocateSpan(address, 1)[0];
+    }
+
+    public uint ReadInstruction(uint address)
+    {
+        return BitConverter.ToUInt32(LocateSpan(address, 4));
     }
 }

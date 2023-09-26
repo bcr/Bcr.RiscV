@@ -44,6 +44,15 @@ class Emulator : IEmulator
             int immediate = 0;
             switch (opcode)
             {
+                case 0b000_0011:
+                    immediate = IComputeImmediate(instruction);
+                    uint readAddress = (uint) (registers[rs1] + immediate);
+                    registers[rd] = funct3 switch
+                    {
+                        0b000 => (uint)SignExtend(_memory.ReadByte(readAddress), 7), // LB
+                        _ => throw new IllegalInstructionException(PC, instruction),
+                    };
+                    break;
                 case 0b110_1111:
                     // JAL
                     registers[rd] = PC + 4;
