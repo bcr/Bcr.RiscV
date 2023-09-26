@@ -113,6 +113,7 @@ class Emulator : IEmulator
                         0b010 => (uint) (((int) registers[rs1] < (int) registers[rs2]) ? 1 : 0), // SLT
                         0b011 => (uint) ((registers[rs1] < registers[rs2]) ? 1 : 0), // SLTU
                         0b100 => registers[rs1] ^ registers[rs2], // XOR
+                        0b110 => registers[rs1] | registers[rs2], // OR
                         _ => throw new NotImplementedException(),
                     };
                     break;
