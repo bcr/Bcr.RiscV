@@ -71,6 +71,11 @@ class Emulator : IEmulator
                             immediate = IComputeImmediate(instruction);
                             registers[rd] = (uint) (((int) registers[rs1] < immediate) ? 1 : 0);
                             break;
+                        case 0b011:
+                            // SLTIU
+                            immediate = IComputeImmediate(instruction);
+                            registers[rd] = (uint) ((registers[rs1] < (uint) immediate) ? 1 : 0);
+                            break;
                         case 0b100:
                             // XORI
                             immediate = IComputeImmediate(instruction);
