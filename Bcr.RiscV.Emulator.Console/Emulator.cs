@@ -110,6 +110,7 @@ class Emulator : IEmulator
                             _ => throw new NotImplementedException(),
                         },
                         0b001 => registers[rs1] << (int) registers[rs2], // SLL
+                        0b010 => (uint) (((int) registers[rs1] < (int) registers[rs2]) ? 1 : 0), // SLT
                         _ => throw new NotImplementedException(),
                     };
                     break;
