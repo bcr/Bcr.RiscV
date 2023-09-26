@@ -67,11 +67,11 @@ class Emulator : IEmulator
                         {
                             0b0000000 => registers[rs1] >> (int)shamt, // SRLI
                             0b0100000 => (uint)SignExtend((int)(registers[rs1] >> (int)shamt), (int)(31 - shamt)), // SRAI
-                            _ => throw new NotImplementedException(),
+                            _ => throw new IllegalInstructionException(PC, instruction),
                         },
                         0b110 => registers[rs1] | (uint)immediate, // ORI
                         0b111 => registers[rs1] & (uint)immediate, // ANDI
-                        _ => throw new NotImplementedException(),
+                        _ => throw new IllegalInstructionException(PC, instruction),
                     };
                     break;
                 case 0b011_0011:
@@ -81,7 +81,7 @@ class Emulator : IEmulator
                         {
                             0b0000000 => registers[rs1] + registers[rs2], // ADD
                             0b0100000 => registers[rs1] - registers[rs2], // SUB
-                            _ => throw new NotImplementedException(),
+                            _ => throw new IllegalInstructionException(PC, instruction),
                         },
                         0b001 => registers[rs1] << (int) registers[rs2], // SLL
                         0b010 => (uint) (((int) registers[rs1] < (int) registers[rs2]) ? 1 : 0), // SLT
@@ -91,11 +91,11 @@ class Emulator : IEmulator
                         {
                             0b0000000 => registers[rs1] >> (int) registers[rs2], // SRL
                             0b0100000 => (uint) SignExtend((int) registers[rs1] >> (int) registers[rs2], (int) (31 - (registers[rs2] % 32))), // SRA
-                            _ => throw new NotImplementedException(),
+                            _ => throw new IllegalInstructionException(PC, instruction),
                         },
                         0b110 => registers[rs1] | registers[rs2], // OR
                         0b111 => registers[rs1] & registers[rs2], // AND
-                        _ => throw new NotImplementedException(),
+                        _ => throw new IllegalInstructionException(PC, instruction),
                     };
                     break;
                 case 0b111_0011:
@@ -116,7 +116,7 @@ class Emulator : IEmulator
                                     pcNeedsAdjusting = false;
                                     break;
                                 default:
-                                    throw new NotImplementedException();
+                                    throw new IllegalInstructionException(PC, instruction);
                             }
                             break;
                         case 0b001:
@@ -132,7 +132,7 @@ class Emulator : IEmulator
                             registers[rd] = _csr.ReadWrite(csr, csrimm);
                             break;
                         default:
-                            throw new NotImplementedException();
+                            throw new IllegalInstructionException(PC, instruction);
                     }
                     break;
                 case 0b110_0011:
@@ -145,7 +145,7 @@ class Emulator : IEmulator
                         0b101 => (int)registers[rs1] >= (int)registers[rs2], // BGE
                         0b110 => registers[rs1] < registers[rs2], // BLTU
                         0b111 => registers[rs1] >= registers[rs2], // BGEU
-                        _ => throw new NotImplementedException(),
+                        _ => throw new IllegalInstructionException(PC, instruction),
                     };
                     if (conditionMet)
                     {
@@ -176,7 +176,7 @@ class Emulator : IEmulator
                     pcNeedsAdjusting = false;
                     break;
                 default:
-                    throw new NotImplementedException();
+                    throw new IllegalInstructionException(PC, instruction);
             }
             // Let people write to x0 but then fix it
             registers[0] = 0;
