@@ -189,7 +189,14 @@ class Emulator : IEmulator
             var mask = (1 << rangeLength) - 1;
             mask <<= offset - (rangeLength - 1);
             var value = instruction & mask;
-            value >>= (offset - range.Start.Value);
+            if (offset >= range.Start.Value)
+            {
+                value >>= (offset - range.Start.Value);
+            }
+            else
+            {
+                value <<= (range.Start.Value - offset);
+            }
             finalValue |= (int) value;
 
             offset -= rangeLength;
@@ -238,6 +245,6 @@ class Emulator : IEmulator
         Range[] ranges = {
             new(31, 12),
         };
-        return SignExtend(ComputeImmediate(instruction, ranges, 31, 0), ranges[0].Start.Value);
+        return ComputeImmediate(instruction, ranges, 31, 0);
     }
 }
