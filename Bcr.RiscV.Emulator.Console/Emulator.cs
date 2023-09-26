@@ -66,6 +66,11 @@ class Emulator : IEmulator
                             // SLLI
                             registers[rd] = registers[rs1] << (int) shamt;
                             break;
+                        case 0b100:
+                            // XORI
+                            immediate = IComputeImmediate(instruction);
+                            registers[rd] = registers[rs1] ^ (uint) immediate;
+                            break;
                         case 0b101:
                             // SRAI
                             immediate = IComputeImmediate(instruction);
