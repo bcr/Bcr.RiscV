@@ -63,7 +63,12 @@ class Emulator : IEmulator
                         0b010 => (uint)(((int)registers[rs1] < immediate) ? 1 : 0), // SLTI
                         0b011 => (uint)((registers[rs1] < (uint)immediate) ? 1 : 0), // SLTIU
                         0b100 => registers[rs1] ^ (uint)immediate, // XORI
-                        0b101 => (uint)SignExtend((int)(registers[rs1] >> (int)shamt), (int)(31 - shamt)), // SRAI
+                        0b101 => funct7 switch
+                        {
+                            0b0000000 => registers[rs1] >> (int)shamt, // SRLI
+                            0b0100000 => (uint)SignExtend((int)(registers[rs1] >> (int)shamt), (int)(31 - shamt)), // SRAI
+                            _ => throw new NotImplementedException(),
+                        },
                         0b110 => registers[rs1] | (uint)immediate, // ORI
                         0b111 => registers[rs1] & (uint)immediate, // ANDI
                         _ => throw new NotImplementedException(),
