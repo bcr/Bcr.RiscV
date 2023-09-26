@@ -116,6 +116,7 @@ class Emulator : IEmulator
                         0b101 => funct7 switch
                         {
                             0b0000000 => registers[rs1] >> (int) registers[rs2], // SRL
+                            0b0100000 => (uint) SignExtend((int) registers[rs1] >> (int) registers[rs2], (int) (31 - (registers[rs2] % 32))), // SRA
                             _ => throw new NotImplementedException(),
                         },
                         0b110 => registers[rs1] | registers[rs2], // OR
@@ -219,7 +220,7 @@ class Emulator : IEmulator
     {
         var finalValue = value;
 
-        if ((value & (1 << bitPosition)) != 0)
+        if ((bitPosition < 31) && ((value & (1 << bitPosition)) != 0))
         {
             var oneBits = 0xFFFF_FFFF << (bitPosition + 1);
             finalValue |= (int) oneBits;
