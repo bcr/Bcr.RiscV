@@ -109,6 +109,7 @@ class Emulator : IEmulator
                             0b0100000 => registers[rs1] - registers[rs2], // SUB
                             _ => throw new NotImplementedException(),
                         },
+                        0b001 => registers[rs1] << (int) registers[rs2], // SLL
                         _ => throw new NotImplementedException(),
                     };
                     break;
