@@ -40,7 +40,8 @@ rv32ui-p-sb
 rv32ui-p-sh
 rv32ui-p-sw
 rv32ui-p-ma_data
+rv32ui-p-fence_i
 
 ## Broken
 
-rv32ui-p-fence_i
+(None known)
