@@ -31,9 +31,6 @@ rv32ui-p-bltu
 rv32ui-p-bgeu
 rv32ui-p-srai
 rv32ui-p-srli
-
-## Broken
-
 rv32ui-p-lb
 rv32ui-p-lbu
 rv32ui-p-lh
@@ -43,4 +40,7 @@ rv32ui-p-sb
 rv32ui-p-sh
 rv32ui-p-sw
 rv32ui-p-ma_data
+
+## Broken
+
 rv32ui-p-fence_i
