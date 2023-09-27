@@ -25,23 +25,20 @@ class DefaultCsr : ICsr
 
     public uint Read(uint csr)
     {
-        uint currentValue = 0;
-        _csrDictionary.TryGetValue(csr, out currentValue);
+        _csrDictionary.TryGetValue(csr, out uint currentValue);
         return currentValue;
     }
 
     public uint ReadSet(uint csr, uint value)
     {
-        uint currentValue = 0;
-        _csrDictionary.TryGetValue(csr, out currentValue);
+        _csrDictionary.TryGetValue(csr, out uint currentValue);
         _csrDictionary[csr] = currentValue | value;
         return currentValue;
     }
 
     public uint ReadWrite(uint csr, uint value)
     {
-        uint currentValue = 0;
-        _csrDictionary.TryGetValue(csr, out currentValue);
+        _csrDictionary.TryGetValue(csr, out uint currentValue);
         _csrDictionary[csr] = value;
         return currentValue;
     }
