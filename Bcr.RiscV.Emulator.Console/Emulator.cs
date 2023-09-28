@@ -63,6 +63,7 @@ class Emulator : IEmulator
                     switch (funct3)
                     {
                         case 0b000:
+                            // SB
                             _memory.WriteByte(writeAddress, (byte) (registers[rs2] & 0x0FF));
                             break;
                         case 0b001:
