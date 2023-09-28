@@ -5,7 +5,7 @@ namespace Bcr.RiscV.Emulator.Console;
 
 class ELFMemory : IMemory
 {
-    private Dictionary<uint, byte[]> _programChunks = new Dictionary<uint, byte[]>();
+    private readonly Dictionary<uint, byte[]> _programChunks = new Dictionary<uint, byte[]>();
 
     public ELFMemory(string filename)
     {
