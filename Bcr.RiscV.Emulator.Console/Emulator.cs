@@ -45,6 +45,7 @@ class Emulator : IEmulator
             switch (opcode)
             {
                 case 0b000_0011:
+                    // LOAD
                     immediate = IComputeImmediate(instruction);
                     uint readAddress = (uint) (registers[rs1] + immediate);
                     registers[rd] = funct3 switch
@@ -58,6 +59,7 @@ class Emulator : IEmulator
                     };
                     break;
                 case 0b010_0011:
+                    // STORE
                     immediate = SComputeImmediate(instruction);
                     uint writeAddress = (uint) (registers[rs1] + immediate);
                     switch (funct3)
@@ -88,7 +90,7 @@ class Emulator : IEmulator
                     pcNeedsAdjusting = false;
                     break;
                 case 0b001_0011:
-                    // ALU
+                    // OP-IMM
                     immediate = IComputeImmediate(instruction);
                     registers[rd] = funct3 switch
                     {
@@ -109,6 +111,7 @@ class Emulator : IEmulator
                     };
                     break;
                 case 0b011_0011:
+                    // OP
                     registers[rd] = funct3 switch
                     {
                         0b000 => funct7 switch
@@ -170,7 +173,7 @@ class Emulator : IEmulator
                     }
                     break;
                 case 0b110_0011:
-                    // Branch
+                    // BRANCH
                     bool conditionMet = funct3 switch
                     {
                         0b000 => registers[rs1] == registers[rs2], // BEQ
@@ -199,6 +202,7 @@ class Emulator : IEmulator
                     registers[rd] = (uint) immediate;
                     break;
                 case 0b000_1111:
+                    // MISC-MEM
                     // FENCE
                     break;
                 case 0b110_0111:
