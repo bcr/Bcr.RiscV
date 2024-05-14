@@ -17,20 +17,24 @@ I implemented, with some quirks:
   instruction set. This requires nontrivial implementation of the CSR
   registers, most notably the `mepc` CSR for handling the `MRET` instruction.
 * The provided Makefile isn't particularly interested in testing just the
-  `rv32ui-p` tests (single core, no virtual memory.) I patched it, but it's
-  still not quite right (wants to run the `-v` tests also, which I don't have
-  any interest in running.)
+  `rv32ui-p` tests (single core, no virtual memory.)
 * The expected input to the simulator under test is an ELF executable, so I got
   to learn about that.
 
-My Makefile patch runs all of the `-p` tests before exploding when moving on to
-the `-v` tests. But right up until then, it works great.
-
 ```diff
 diff --git a/isa/Makefile b/isa/Makefile
-index d66b901..e785a15 100644
+index d66b901..2ec7685 100644
 --- a/isa/Makefile
 +++ b/isa/Makefile
+@@ -63,7 +63,7 @@ $(1)_tests += $$($(1)_p_tests)
+ 
+ $$($(1)_v_tests): $(1)-v-%: $(1)/%.S
+ 	$$(RISCV_GCC) $(2) $$(RISCV_GCC_OPTS) -DENTROPY=0x$$(shell echo \$$@ | md5sum | cut -c 1-7) -std=gnu99 -O2 -I$(src_dir)/../env/v -I$(src_dir)/macros/scalar -T$(src_dir)/../env/v/link.ld $(src_dir)/../env/v/entry.S $(src_dir)/../env/v/*.c $$< -o $$@
+-$(1)_tests += $$($(1)_v_tests)
++#$(1)_tests += $$($(1)_v_tests)
+ 
+ $(1)_tests_dump = $$(addsuffix .dump, $$($(1)_tests))
+ 
 @@ -108,6 +108,7 @@ tests_out = $(addsuffix .out, $(filter rv64%,$(tests)))
  tests32_out = $(addsuffix .out32, $(filter rv32%,$(tests)))
  
@@ -39,6 +43,23 @@ index d66b901..e785a15 100644
  
  junk += $(tests) $(tests_dump) $(tests_hex) $(tests_out) $(tests32_out)
  
+```
+
+## Running The Damn Tests
+
+Make the patch to the Makefile from the previous section.
+
+```
+➜  isa git:(master) ✗ pwd
+/Users/blake/Source/OpenSource/riscv-tests/isa
+
+➜  isa git:(master) ✗ cat ./sim
+dotnet run --no-build --project ../../../bcr/Bcr.RiscV/Bcr.RiscV.Emulator.Console/Bcr.RiscV.Emulator.Console.csproj $@
+
+RISCV_PREFIX=riscv64-elf- RISCV_SIM=./sim make run32
+
+# Makes .dump files
+RISCV_PREFIX=riscv64-elf- RISCV_SIM=./sim make all
 ```
 
 ## So How Does It Work?
