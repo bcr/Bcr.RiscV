@@ -29,7 +29,7 @@ class Emulator : IEmulator
         while (running)
         {
             // Read next instruction
-            var instruction = _memory.ReadInstruction(PC);
+            var instruction = _memory.ReadInstruction(PC, out var instructionLength);
             var opcode = instruction & 0b111_1111;
             var rd = (instruction & 0b1111_1000_0000) >> 7;
             var rs1 = (instruction & 0b1111_1000_0000_0000_0000) >> 15;
@@ -222,7 +222,7 @@ class Emulator : IEmulator
             // Adjust PC if required
             if (pcNeedsAdjusting)
             {
-                PC += 4;
+                PC += (uint) instructionLength;
             }
         }
         return returnValue;

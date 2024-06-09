@@ -35,9 +35,25 @@ class ELFMemory : IMemory
         return LocateSpan(address, 1)[0];
     }
 
-    public uint ReadInstruction(uint address)
+    // All the 32-bit instructions in the base ISA have their lowest two bits
+    // set to "11". The optional compressed 16-bit instruction-set extensions
+    // have their lowest two bits equal to 00, 01, or 10.
+    private static bool IsCompressedInstruction(byte firstInstructionByte) => (firstInstructionByte & 0b11) != 0b11;
+
+    public uint ReadInstruction(uint address, out int instructionLength)
     {
-        return BitConverter.ToUInt32(LocateSpan(address, 4));
+        if (IsCompressedInstruction(ReadByte(address)))
+        {
+            var instruction = ReadHalfword(address);
+            instructionLength = 2;
+            return instruction;
+        }
+        else
+        {
+            var instruction = ReadWord(address);
+            instructionLength = 4;
+            return instruction;
+        }
     }
 
     public ushort ReadHalfword(uint address)
